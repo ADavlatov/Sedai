@@ -61,14 +61,33 @@ public class Network
         return _outputLayer!.Pass();
     }
 
-    //прямой проход с тренировочным сетом
-    public static double[] PassWithTrainingSet(double[] trainingSet, Network network)
+    //обучить нейронную сеть с помощью заданного набора тренировочных сетов (до ошибки < 0.001)
+    public void Educate(double[][] trainingSets, double[] desiredResults)
     {
-        return network.Start(trainingSet);
+        double error = 1;
+
+        while (error > 0.001)
+        {
+            double errorSum = 0;
+
+            for (int i = 0; i < trainingSets.Length; i++)
+            {
+                double[] result = Start(trainingSets[i]);
+        
+                UpdateWeights(this, result[0], desiredResults[i], 0.7, 0.3);
+    
+                errorSum += Math.Pow(desiredResults[i] - result[0], 2);
+            }
+
+            error = errorSum / trainingSets.Length;
+
+            Console.WriteLine("---------------------------------");
+            Console.WriteLine("Ошибка: " + error);
+        }
     }
 
     //изменение весов
-    public void Teach(Network network, double result, double desiredResult, double trainSpeed, double momentum)
+    public void UpdateWeights(Network network, double result, double desiredResult, double trainSpeed, double momentum)
     {
         WeightChangeCounter.ChangeLayerWeights(network._outputLayer!, network._hiddenLayer![0], trainSpeed, momentum,
             result,
