@@ -80,9 +80,6 @@ public class Network
             }
 
             error = errorSum / trainingSets.Length;
-
-            Console.WriteLine("---------------------------------");
-            Console.WriteLine("Ошибка: " + error);
         }
     }
 
